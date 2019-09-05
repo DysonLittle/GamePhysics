@@ -55,6 +55,6 @@ public class Particle2D : MonoBehaviour
         updateRotationEulerExplicit(Time.fixedDeltaTime);
         transform.rotation = Quaternion.Euler(0f, 0f, rotation);
 
-        //acceleration.x = -Mathf.Sin(Time.fixedDeltaTime);
+        acceleration.x = -Mathf.Sin(Time.fixedTime);
     }
 }
