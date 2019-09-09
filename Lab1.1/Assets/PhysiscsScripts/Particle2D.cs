@@ -3,18 +3,44 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+
 public class Particle2D : MonoBehaviour
 {
+     float GRAV = 9.8f;
+
+    /* UI */
     public Dropdown positionDropdown;
     public Dropdown rotationDropdown;
 
     int positionMode, rotationMode;
 
+    public bool sinAcceleration = true;
+
+
+    /* Physics */
+
     public Vector2 position, velocity, acceleration;
 
     public float rotation, angularVelocity, angularAcceleration;
 
-    public bool sinAcceleration = true;
+    public float startingMass = 1.0f;
+
+    float mass, massInv;
+
+    public void setMass(float newMass)
+    {
+        //mass = newMass > 0.0f ? newMass : 0.0f;
+        mass = Mathf.Max(0.0f, newMass);
+        massInv = mass > 0.0f ? 1.0f / mass : 0.0f;
+    }
+
+    public float getMass()
+    {
+        return mass;
+    }
+
+    
 
     public void changePositionMode()
     {
@@ -74,6 +100,22 @@ public class Particle2D : MonoBehaviour
     {
         positionMode = 0;
         rotationMode = 0;
+
+        setMass(startingMass);
+    }
+
+    Vector2 force;
+
+    public void addForce(Vector2 newForce)
+    {
+        //D'Alembert
+        force += newForce;
+    }
+
+    void updateAcceleration()
+    {
+        acceleration = force * massInv;
+        force = Vector2.zero;
     }
 
     // Update is called once per frame
@@ -92,9 +134,17 @@ public class Particle2D : MonoBehaviour
             updateRotationEulerExplicit(Time.fixedDeltaTime);
         transform.rotation = Quaternion.Euler(0f, 0f, rotation);
 
+        updateAcceleration();
+
+        /*
         if (sinAcceleration)
             acceleration.x = -Mathf.Sin(Time.fixedTime);
         else
             acceleration.x = 0;
+        */
+
+        //lab 2 test: gravity
+
+        addForce(ForceGenerator.GenerateForce_Gravity(mass, GRAV, Vector2.up));
     }
 }
