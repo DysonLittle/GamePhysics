@@ -145,6 +145,8 @@ public class Particle2D : MonoBehaviour
 
         //lab 2 test: gravity
 
-        addForce(ForceGenerator.GenerateForce_Gravity(mass, GRAV, Vector2.up));
+        Vector2 grav_Force = ForceGenerator.GenerateForce_Gravity(mass, GRAV, Vector2.up);
+        
+        Vector2 normal_Force = ForceGenerator.GenerateForce_normal(grav_Force, );
     }
 }

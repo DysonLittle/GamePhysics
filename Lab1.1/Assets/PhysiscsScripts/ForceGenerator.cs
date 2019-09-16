@@ -24,23 +24,25 @@ public class ForceGenerator
 
     public static Vector2 GenerateForce_friction_static(Vector2 f_normal, Vector2 f_opposing, float frictionCoefficient_static)
     {
-        //make better
-        Vector2 f_friction_s = f_opposing.magnitude < (frictionCoefficient_static * f_normal).magnitude ? -1 * f_opposing : -1 * frictionCoefficient_static * f_normal;
+        Vector2 f_friction_s = f_opposing.magnitude < frictionCoefficient_static * f_normal.magnitude ? -1 * f_opposing : -1 * frictionCoefficient_static * f_normal.magnitude * f_opposing.normalized;
         return f_friction_s;
     }
 
-    public static Vector2 GenerateForce_friction_kinetic(Vector2 f_normal, Vector2 f_opposing, float frictionCoefficient_kinetic)
+    public static Vector2 GenerateForce_friction_kinetic(Vector2 f_normal, Vector2 particleVelocity, float frictionCoefficient_kinetic)
     {
-        Vector2 f_friction_k =
+        Vector2 f_friction_k = -1 * frictionCoefficient_kinetic * f_normal.magnitude * particleVelocity.normalized;
+        return f_friction_k;
     }
 
     public static Vector2 GenerateForce_drag(Vector2 particleVelocity, Vector2 fluidVelocity, float fluidDensity, float objectArea_crossSection, float objectDragCoefficient)
     {
-
+        Vector2 f_drag = 0.5f * fluidDensity * (fluidVelocity - particleVelocity) * (fluidVelocity - particleVelocity) * objectDragCoefficient * objectArea_crossSection;
+        return f_drag;
     }
 
-    public static Vector2 GenerateForce_spring(Vector2 particlePosition, Vector2 anchorPosiiotn, float springRestingLength, float springStiffnessCoeffiecient)
+    public static Vector2 GenerateForce_spring(Vector2 particlePosition, Vector2 anchorPosition, float springRestingLength, float springStiffnessCoefficient)
     {
-
+        Vector2 f_spring = -1 * springStiffnessCoefficient * ((particlePosition - anchorPosition) - (springRestingLength * (particlePosition - anchorPosition).normalized));
+        return f_spring;
     }
 }
