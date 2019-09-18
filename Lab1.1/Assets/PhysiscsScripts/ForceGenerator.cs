@@ -12,7 +12,7 @@ public class ForceGenerator
 
     public static Vector2 GenerateForce_normal(Vector2 f_gravity, Vector2 surfaceNormal_unit)
     {
-        Vector2 f_normal = (Vector2.Dot(f_gravity, surfaceNormal_unit) / Vector2.Dot(surfaceNormal_unit, surfaceNormal_unit)) * surfaceNormal_unit;
+        Vector2 f_normal = (Vector2.Dot(f_gravity, surfaceNormal_unit) / Vector2.Dot(surfaceNormal_unit, surfaceNormal_unit)) * -1 * surfaceNormal_unit;
         return f_normal;
     }
 
@@ -36,7 +36,8 @@ public class ForceGenerator
 
     public static Vector2 GenerateForce_drag(Vector2 particleVelocity, Vector2 fluidVelocity, float fluidDensity, float objectArea_crossSection, float objectDragCoefficient)
     {
-        Vector2 f_drag = 0.5f * fluidDensity * (fluidVelocity - particleVelocity) * (fluidVelocity - particleVelocity) * objectDragCoefficient * objectArea_crossSection;
+        Vector2 relativeVelocity = fluidVelocity - particleVelocity;
+        Vector2 f_drag = 0.5f * fluidDensity * Vector2.Dot(relativeVelocity, relativeVelocity) * objectDragCoefficient * objectArea_crossSection * (-1.0f * particleVelocity.normalized);
         return f_drag;
     }
 

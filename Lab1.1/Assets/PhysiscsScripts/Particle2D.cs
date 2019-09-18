@@ -9,11 +9,15 @@ public class Particle2D : MonoBehaviour
 {
      float GRAV = 9.8f;
 
+    public GameObject plane;
+
     /* UI */
     public Dropdown positionDropdown;
     public Dropdown rotationDropdown;
+    public Dropdown forceDemoDropdown;
+    public Slider slider;
 
-    int positionMode, rotationMode;
+    int positionMode, rotationMode, forceDemoMode;
 
     public bool sinAcceleration = true;
 
@@ -52,6 +56,40 @@ public class Particle2D : MonoBehaviour
     {
         rotationMode = rotationDropdown.value;
         Debug.Log(rotationMode);
+    }
+
+    public void changeForceDemoMode()
+    {
+        forceDemoMode = forceDemoDropdown.value;
+
+        if (forceDemoMode == 0)
+        {
+            plane.SetActive(true);
+            plane.transform.rotation = Quaternion.identity;
+            plane.transform.Rotate(new Vector3(0, 0, -22.5f));
+        }
+        else if (forceDemoMode == 1)
+        {
+            plane.SetActive(true);
+            plane.transform.rotation = Quaternion.identity;
+            plane.transform.Rotate(new Vector3(0, 0, 45));
+        }
+        else if (forceDemoMode == 2)
+        {
+            plane.SetActive(false);
+        }
+        else if (forceDemoMode == 3)
+        {
+            plane.SetActive(true);
+            plane.transform.rotation = Quaternion.identity;
+        }
+
+        reset();
+    }
+
+    public void changeSlider()
+    {
+        //slider.value;
     }
 
     void updatePositionEulerExplicit(float dt)
@@ -95,11 +133,19 @@ public class Particle2D : MonoBehaviour
         angularVelocity = angularVelocity + angularAcceleration * dt;
     }
 
+    void reset()
+    {
+        position = Vector2.zero;
+        velocity = Vector2.zero;
+        acceleration = Vector2.zero;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         positionMode = 0;
         rotationMode = 0;
+        forceDemoMode = 0;
 
         setMass(startingMass);
     }
@@ -128,13 +174,16 @@ public class Particle2D : MonoBehaviour
             updatePositionEulerExplicit(Time.fixedDeltaTime);
         transform.position = position;
 
+        /* Rotation
+         * 
         if (rotationMode == 0)
             updateRotationKinematic(Time.fixedDeltaTime);
         else if (rotationMode == 1)
             updateRotationEulerExplicit(Time.fixedDeltaTime);
         transform.rotation = Quaternion.Euler(0f, 0f, rotation);
+        */
 
-        updateAcceleration();
+
 
         /*
         if (sinAcceleration)
@@ -145,8 +194,49 @@ public class Particle2D : MonoBehaviour
 
         //lab 2 test: gravity
 
-        Vector2 grav_Force = ForceGenerator.GenerateForce_Gravity(mass, GRAV, Vector2.up);
+        if (forceDemoMode == 0 || forceDemoMode == 1)
+        {
+            Vector2 grav_Force = ForceGenerator.GenerateForce_Gravity(mass, GRAV, Vector2.up);
+
+            Vector2 normal_Force = ForceGenerator.GenerateForce_normal(grav_Force, plane.transform.up);
+
+            addForce(ForceGenerator.GenerateForce_sliding(grav_Force, normal_Force));
+        }
+        else if (forceDemoMode == 2)
+        {
+            Vector2 grav_Force = ForceGenerator.GenerateForce_Gravity(mass, GRAV, Vector2.up);
+
+            Vector2 drag_Force = ForceGenerator.GenerateForce_drag(velocity, Vector2.zero, slider.value * 1.225f * 2f, 1f, 1.05f);
+
+            addForce(grav_Force);
+            addForce(drag_Force);
+        }
+        else if (forceDemoMode == 3)
+        {
+            Vector2 grav_Force = ForceGenerator.GenerateForce_Gravity(mass, GRAV, Vector2.up);
+
+            Vector2 normal_Force = ForceGenerator.GenerateForce_normal(grav_Force, plane.transform.up);
+
+            Vector2 applied_Force = new Vector2(slider.value * 10f, 0f);
+
+            Vector2 drag_Force;
+
+            if (velocity == Vector2.zero)
+            {
+                drag_Force = ForceGenerator.GenerateForce_friction_static(normal_Force, applied_Force, 0.7f);
+            }
+            else
+            {
+                drag_Force = ForceGenerator.GenerateForce_friction_kinetic(normal_Force, velocity, 0.42f);
+            }
+
+            addForce(grav_Force);
+            addForce(normal_Force);
+            addForce(applied_Force);
+            addForce(drag_Force);
+        }
         
-        Vector2 normal_Force = ForceGenerator.GenerateForce_normal(grav_Force, );
+
+        updateAcceleration();
     }
 }
