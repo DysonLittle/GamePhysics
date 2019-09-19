@@ -10,6 +10,7 @@ public class Particle2D : MonoBehaviour
      float GRAV = 9.8f;
 
     public GameObject plane;
+    public GameObject anchorCube;
 
     /* UI */
     public Dropdown positionDropdown;
@@ -67,29 +68,36 @@ public class Particle2D : MonoBehaviour
             plane.SetActive(true);
             plane.transform.rotation = Quaternion.identity;
             plane.transform.Rotate(new Vector3(0, 0, -22.5f));
+
+            anchorCube.SetActive(false);
         }
         else if (forceDemoMode == 1)
         {
             plane.SetActive(true);
             plane.transform.rotation = Quaternion.identity;
             plane.transform.Rotate(new Vector3(0, 0, 45));
+
+            anchorCube.SetActive(false);
         }
         else if (forceDemoMode == 2)
         {
             plane.SetActive(false);
+            anchorCube.SetActive(false);
         }
         else if (forceDemoMode == 3)
         {
             plane.SetActive(true);
             plane.transform.rotation = Quaternion.identity;
+
+            anchorCube.SetActive(false);
+        }
+        else if (forceDemoMode == 4)
+        {
+            plane.SetActive(false);
+            anchorCube.SetActive(true);
         }
 
         reset();
-    }
-
-    public void changeSlider()
-    {
-        //slider.value;
     }
 
     void updatePositionEulerExplicit(float dt)
@@ -143,6 +151,8 @@ public class Particle2D : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        anchorCube.SetActive(false);
+
         positionMode = 0;
         rotationMode = 0;
         forceDemoMode = 0;
@@ -234,6 +244,14 @@ public class Particle2D : MonoBehaviour
             addForce(normal_Force);
             addForce(applied_Force);
             addForce(drag_Force);
+        }
+        else if (forceDemoMode == 4)
+        {
+            Vector2 grav_Force = ForceGenerator.GenerateForce_Gravity(mass, GRAV, Vector2.up);
+            Vector2 spring_Force = ForceGenerator.GenerateForce_spring(position, Vector2.zero, slider.value * 20, 20);
+
+            addForce(grav_Force);
+            addForce(spring_Force);
         }
         
 
