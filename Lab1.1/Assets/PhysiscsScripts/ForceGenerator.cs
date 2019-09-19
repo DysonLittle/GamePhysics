@@ -43,10 +43,11 @@ public class ForceGenerator
 
     public static Vector2 GenerateForce_spring(Vector2 particlePosition, Vector2 anchorPosition, float springRestingLength, float springStiffnessCoefficient)
     {
-        float springLength = (particlePosition - anchorPosition).magnitude;
+        Vector2 spring_diff = particlePosition - anchorPosition;
+        float springLength = spring_diff.magnitude;
         float f_spring_scalar = -1 * springStiffnessCoefficient * (springLength - springRestingLength);
 
-        Vector2 f_spring = f_spring_scalar * (particlePosition - anchorPosition).normalized;
+        Vector2 f_spring = f_spring_scalar * spring_diff.normalized;
         return f_spring;
     }
 }
