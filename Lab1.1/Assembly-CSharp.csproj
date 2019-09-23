@@ -62,7 +62,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\PhysiscsScripts\AxisAlignedBoundingBoxCollisionHull2D.cs" />
+    <Compile Include="Assets\PhysiscsScripts\CircleCollisionHull2D.cs" />
+    <Compile Include="Assets\PhysiscsScripts\CollisionHull2D.cs" />
     <Compile Include="Assets\PhysiscsScripts\ForceGenerator.cs" />
+    <Compile Include="Assets\PhysiscsScripts\ObjectBoundingBoxCollisionHull2D.cs" />
     <Compile Include="Assets\PhysiscsScripts\Particle2D.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/dyson.little/Desktop/GamePhysics/Lab1.1/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
